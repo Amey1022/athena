@@ -12,6 +12,8 @@ Higher-level logic belongs in MemoryManager.
 from __future__ import annotations
 import sqlite3
 from pathlib import Path
+from datetime import datetime 
+from athena.models import Message
 
 class DatabaseManager:
     """Simple SQLite wrapper for ATHENA."""
@@ -70,24 +72,72 @@ class DatabaseManager:
 
         self.connection.commit()
 
-    def execute (self, query: str, params: tuple = ())->sqlite3.Cursor:
+# ============================================================
+# Sessions
+# ============================================================ 
+    def insert_session(self)-> int:
+        #inserting new session and returning its id
+        started_at = datetime.now().isoformat()
         cursor = self.connection.cursor()
-        cursor.execute(query, params)
+        cursor.execute(
+            """
+            INSERT INTO sessions (started_at)
+            VALUES (?)
+            """,
+            (started_at,)
+        )
         self.connection.commit()
-        return cursor
+        return cursor.lastrowid
 
-    def fetchall(self, query: str, params: tuple=())-> list[sqlite3.Row]:
+    def update_session(self, session_id: int, summary:str | None =None)-> None:
+        #Update session when it ends
+        ended_at = datetime.now().isoformat()
         cursor = self.connection.cursor()
-        cursor.execute(query, params)
-        return cursor.fetchall()
-
-    def fetchone(self, query: str, params:tuple=())-> sqlite3.Row | None:
-        cursor = self.connection.cursor()
-        cursor.execute(query, params)
-        return cursor.fetchone()
+        cursor.execute(
+            """
+            UPDATE sessions
+            SET ended_at = ?, summary = ?
+            WHERE id = ?
+            """,
+            (
+                ended_at,
+                summary,
+                session_id,
+            ),
+        )
+        self.connection.commit()
     
+# ============================================================
+# Conversations
+# ============================================================ 
+
+    def insert_conversation(self, session_id:int, message:Message)-> None:
+        #store a conversation message in the database
+        cursor = self.connection.cursor()
+        cursor.execute(
+            """
+            INSERT INTO conversations (
+                session_id,
+                role,
+                content,
+                timestamp
+            )
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                session_id,
+                message.role,
+                message.content,
+                message.timestamp,
+            ),
+        )
+        self.connection.commit()
+        
     def close(self)->None:
-        self.connection.close()
+            self.connection.close()
+                
+    
+    
 
 
 
