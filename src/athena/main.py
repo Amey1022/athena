@@ -1,4 +1,5 @@
 from athena.brain import Brain 
+from athena.conversation import ConversationManager
 from athena.config import APP_NAME, VERSION
 
 
@@ -13,16 +14,16 @@ def banner():
 def main():
 
     banner()
-    print("Initializing Brain...")
     brain = Brain()
-    print("Ready\n")
+    conversation = ConversationManager()
+    print("ATHENA online.\n")
     while True:
         user =input("You > ")
         if user.lower() in {"exit", "quit"}:
             break
-        response = brain.think(user)
+        reply = conversation.chat(brain, user)
 
-        print(f"\nATHENA > {response}\n]")
+        print(f"\nATHENA > {reply}\n")
 
 
 if __name__ == "__main__":
