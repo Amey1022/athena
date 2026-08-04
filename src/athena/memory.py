@@ -49,3 +49,8 @@ class MemoryManager:
         return self.working_memory
     def clear(self)-> None:
         self.working_memory.clear()
+
+    def shutdown(self, summary:str |None= None)-> None:
+        #Gracefully shutdown the memory system
+        self.end_session(summary)
+        self.database.close()

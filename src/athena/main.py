@@ -20,6 +20,8 @@ def main():
     while True:
         user =input("You > ")
         if user.lower() in {"exit", "quit"}:
+            conversation.shutdown()
+            print("\n ATHENA shutting down...\n")
             break
         reply = conversation.chat(brain, user)
 

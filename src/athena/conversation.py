@@ -19,3 +19,7 @@ class ConversationManager:
             reply
         )
         return reply
+
+    def shutdown(self)-> None:
+        #Shut down conversation system
+        self.memory.shutdown()
