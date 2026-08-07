@@ -35,6 +35,34 @@ class MemoryRepository:
         messages= self.database.get_conversation(session_id)
         print(f"Loaded {len(messages)} messages")
         return messages
+# ============================================================
+# Semantic Memory
+# ============================================================
+
+    def save_semantic_memory(
+            self,
+            key:str,
+            value:str,
+            confidence: float = 1.0,
+    ) -> None:
+        #save or update semantic memory
+        self.database.save_semantic_memory(
+            key=key,
+            value= value,
+            confidence= confidence,
+        )
+
+    def get_semantic_memory(self, key:str):
+        #Retrieve semantic memory by key
+        return self.database.get_semantic_memory(key)
+
+    def get_all_semantic_memories(self):
+        #Retrieve all semantic memories
+        return self.database.get_all_semantic_memories()
+
+    def delete_semantic_memory(self, key:str)-> None:
+        #Delete a semantic memory
+        self.database.delete_semantic_memory(key)
 
     def close(self)-> None: 
         self.database.close()
