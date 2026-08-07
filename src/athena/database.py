@@ -87,6 +87,9 @@ class DatabaseManager:
             (started_at,)
         )
         self.connection.commit()
+        if cursor.lastrowid is None:
+             raise RuntimeError("Failed to create session!")
+
         return cursor.lastrowid
 
     def update_session(self, session_id: int, summary:str | None =None)-> None:
@@ -106,6 +109,46 @@ class DatabaseManager:
             ),
         )
         self.connection.commit()
+
+    def get_latest_session_id(self)-> int | None:
+         cursor= self.connection.cursor()
+         cursor.execute(
+                  """
+                    SELECT id
+                    FROM sessions
+                    WHERE ended_at IS NOT NULL
+                    ORDER BY id DESC
+                    LIMIT 1;
+                  """
+         )
+         row = cursor.fetchone()
+         if row is None:
+              return None
+         return int(row["id"])
+
+    def get_conversation(self, session_id:int,)-> list[Message]:
+         cursor= self.connection.cursor()
+         cursor.execute(
+               """
+                SELECT
+                    role,
+                    content,
+                    timestamp
+                FROM conversations
+                WHERE session_id = ?
+                ORDER BY id ASC
+                """,
+                (session_id,),
+         )
+         rows =cursor.fetchall()
+         return[
+              Message(
+                   role= row["role"],
+                   content= row["content"],
+                   timestamp=row["timestamp"],
+              )
+              for row in rows
+         ]
     
 # ============================================================
 # Conversations

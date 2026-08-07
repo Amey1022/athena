@@ -17,15 +17,21 @@ def main():
     brain = Brain()
     conversation = ConversationManager()
     print("ATHENA online.\n")
-    while True:
-        user =input("You > ")
-        if user.lower() in {"exit", "quit"}:
-            conversation.shutdown()
-            print("\n ATHENA shutting down...\n")
-            break
-        reply = conversation.chat(brain, user)
+    try:
+        while True:
+            user =input("You > ")
+            if user.lower() in {"exit", "quit"}:
+                conversation.shutdown()
+                print("\nATHENA shutting down...\n")
+                break
+            reply = conversation.chat(brain, user)
 
-        print(f"\nATHENA > {reply}\n")
+            print(f"\nATHENA > {reply}\n")
+    except KeyboardInterrupt:
+        print("\n\n ATHENA shutting down...")
+    finally:
+        conversation.memory.end_session()
+        print("Session Ended.")
 
 
 if __name__ == "__main__":
