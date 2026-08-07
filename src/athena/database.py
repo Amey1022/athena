@@ -175,6 +175,88 @@ class DatabaseManager:
             ),
         )
         self.connection.commit()
+# ============================================================
+# Semantic Memory
+# ============================================================
+    def save_semantic_memory(
+              self,
+              key: str, 
+              value:str,
+              confidence: float = 1.0,
+    ) -> None:
+         #Creates or updates semantic memory
+         updated_at = datetime.now().isoformat()
+         cursor = self.connection.cursor()
+         cursor.execute(
+              """
+                INSERT INTO semantic_memory (
+                    key,
+                    value,
+                    confidence,
+                    updated_at
+                )
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(key)
+                DO UPDATE SET
+                    value = excluded.value,
+                    confidence = excluded.confidence,
+                    updated_at = excluded.updated_at
+                """,
+            (
+                 key,
+                 value,
+                 confidence,
+                 updated_at,
+            ),
+         )
+         self.connection.commit()
+
+    def get_semantic_memory(self, key:str)-> sqlite3.Row | None:
+         # Retrieve semantic memory by key
+         cursor = self.connection.cursor()
+         cursor.execute(
+               """
+                SELECT
+                    id,
+                    key,
+                    value,
+                    confidence,
+                    updated_at
+                FROM semantic_memory
+                WHERE key = ?
+                """,
+                (key,), 
+         )
+         return cursor.fetchone()
+
+    def get_all_semantic_memories(self)-> list[sqlite3.Row]:
+         #Retrieves all semantic memories
+         cursor= self.connection.cursor()
+         cursor.execute(
+                """
+                SELECT
+                    id,
+                    key,
+                    value,
+                    confidence,
+                    updated_at
+                FROM semantic_memory
+                ORDER BY updated_at DESC
+                """
+         )
+         return cursor.fetchall()
+
+    def delete_semantic_memory(self, key:str)-> None:
+         #Delete a semanitc memory by key
+         cursor = self.connection.cursor()
+         cursor.execute(
+              """
+              DELETE FROM semantic_memory
+              WHERE key = ?
+              """,
+             (key,),
+         )
+         self.connection.commit()
         
     def close(self)->None:
             self.connection.close()
