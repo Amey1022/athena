@@ -37,64 +37,18 @@ class SemanticMemoryManager:
        #Delete a semantic memory
        self.repository.delete_semantic_memory(key)
 
+    def get_context(self) -> str:
+       #Return semantic memories formatted for llm context
+       memories = self.recall_all()
+       if not memories:
+          return ""
+       lines = ["Known facts about the user:"]
+       for memory in memories:
+          lines.append(
+             f"-{memory['key']} : {memory['value']}"
+          )
+       return "\n".join(lines)
     def close(self)-> None:
        #close this repository
        self.repository.close()
-
-if __name__ == "__main__":
-    memory = SemanticMemoryManager()
-    # --------------------------------------------------------
-    # 1. Store a memory
-    # --------------------------------------------------------
-    print("\n1. Storing memory...")
-
-    memory.remember(
-        "favourite_programming_language",
-        "Python",
-    )
-
-    # --------------------------------------------------------
-    # 2. Recall the memory
-    # --------------------------------------------------------
-
-    print("\n2. Recalling memory...")
-
-    result = memory.recall("favourite_programming_language")
-
-    print(dict(result) if result else "Memory not found")
-
-    # --------------------------------------------------------
-    # 3. Update the memory
-    # --------------------------------------------------------
-
-    print("\n3. Updating memory...")
-
-    memory.remember(
-        "favourite_programming_language",
-        "C++",
-        confidence=0.9,
-    )
-
-    result = memory.recall("favourite_programming_language")
-
-    print(dict(result) if result else "Memory not found")
-
-    # --------------------------------------------------------
-    # 4. Forget the memory
-    # --------------------------------------------------------
-
-    print("\n4. Forgetting memory...")
-
-    memory.forget("favourite_programming_language")
-
-    # --------------------------------------------------------
-    # 5. Verify deletion
-    # --------------------------------------------------------
-
-    print("\n5. Checking memory...")
-
-    result = memory.recall("favourite_programming_language")
-
-    print(dict(result) if result else "Memory not found")
-
-    memory.close()
+       
