@@ -26,7 +26,7 @@ class ConversationManager:
             user_message
         )
         #build temporary context for the reasoning engine
-        messages= list(self.memory.get_working_memory())
+        messages= list(self.memory.get_context_window(12))
         semantic_context = self.semantic_memory.get_context()
         if semantic_context:
             messages.insert(
@@ -36,6 +36,7 @@ class ConversationManager:
                     content = semantic_context,
                 ),
             ) 
+        print(f"Context size: {len(messages)} messages")
         try:
             reply = brain.think(messages)
         except Exception as e:

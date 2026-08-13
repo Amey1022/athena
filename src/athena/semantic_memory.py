@@ -37,9 +37,9 @@ class SemanticMemoryManager:
        #Delete a semantic memory
        self.repository.delete_semantic_memory(key)
 
-    def get_context(self) -> str:
+    def get_context(self,limit:int = 20) -> str:
        #Return semantic memories formatted for llm context
-       memories = self.recall_all()
+       memories = self.recall_all()[:limit]
        if not memories:
           return ""
        lines = ["Known facts about the user:"]

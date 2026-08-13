@@ -67,6 +67,13 @@ class MemoryManager:
             print(f"Restored {len(previous)} messages.")
         self.working_memory.extend(previous)
 
+    def get_context_window(self, max_messages:int = 12)-> list[Message]:
+        if len(self.working_memory)<= 1:
+            return self.working_memory
+        system = self.working_memory[0]
+        recent = self.working_memory[-max_messages:]
+        return [system] +  recent
+
     def clear(self)-> None:
         self.working_memory.clear()
 

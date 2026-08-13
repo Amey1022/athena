@@ -46,14 +46,4 @@ if __name__ == "__main__":
 
     memory.close()
 
-    
-if __name__ == "__main__":
 
-    memory = EpisodicMemoryManager()
-
-    print("\nRecent Episodes:\n")
-
-    for episode in memory.recall_recent():
-        print(dict(episode))
-
-    memory.close()
