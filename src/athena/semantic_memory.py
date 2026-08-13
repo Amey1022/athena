@@ -51,4 +51,4 @@ class SemanticMemoryManager:
     def close(self)-> None:
        #close this repository
        self.repository.close()
-       
+
