@@ -4,6 +4,7 @@ from athena.brain import Brain
 from athena.semantic_memory import SemanticMemoryManager
 from athena.models import Message
 from athena.memory_detector import MemoryDetector
+from athena.episodic_memory import EpisodicMemoryManager
 
 class ConversationManager:
     def __init__(self):
@@ -11,6 +12,7 @@ class ConversationManager:
         self.memory = MemoryManager()
         self.semantic_memory = SemanticMemoryManager()
         self.detector = MemoryDetector()
+        self.episodic_memory = EpisodicMemoryManager()
         if not self.memory.get_working_memory() or self.memory.get_working_memory()[0].role != "system":
             self.memory.initialize(SYSTEM_PROMPT)
 
@@ -45,7 +47,15 @@ class ConversationManager:
         )
         return reply
 
-    def shutdown(self)-> None:
+    def shutdown(self, brain: Brain)-> None:
         #Shut down conversation system
-        self.memory.shutdown()
+        messages = self.memory.get_working_memory()
+        summary = brain.summarize(messages)
+        self.episodic_memory.remember(
+            summary=summary,
+            importance= 0.8,
+            tags= "conversation",
+        )
+        self.memory.shutdown(summary)
         self.semantic_memory.close()
+        self.episodic_memory.close()

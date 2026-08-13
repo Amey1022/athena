@@ -257,6 +257,52 @@ class DatabaseManager:
              (key,),
          )
          self.connection.commit()
+# ============================================================
+# Episodic Memory
+# ============================================================
+    def save_episode(
+              self,
+              summary:str,
+              importance: float,
+              tags:str,
+    )-> None:
+         created_at = datetime.now().isoformat()
+         cursor = self.connection.cursor()
+         cursor.execute(
+               """
+                INSERT INTO episodic_memory (
+                    summary,
+                    importance,
+                    tags,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    summary,
+                    importance,
+                    tags,
+                    created_at,
+                ),
+         )
+         self.connection.commit()
+
+    def get_recent_episodes(self, limit:int = 5):
+         cursor= self.connection.cursor()
+         cursor.execute(
+                  """
+                SELECT
+                    summary,
+                    importance,
+                    tags,
+                    created_at
+                FROM episodic_memory
+                ORDER BY created_at DESC
+                LIMIT ?
+                """,
+                (limit,),
+         )
+         return cursor.fetchall()
         
     def close(self)->None:
             self.connection.close()

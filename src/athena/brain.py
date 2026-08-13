@@ -10,3 +10,19 @@ class Brain:
 
     def think(self, messages: List[Message])-> str:
         return self.llm.generate(messages)
+
+    def summarize(self, messages:List[Message]) -> str:
+        """
+        Generate a concise summary of the conversation.
+        """
+        prompt= [
+            Message(
+                role="system",
+                content=(
+                    "Summarize this conversation in 2-3 concise sentences. "
+                    "Focus on what was accomplished and important decisions."
+                ),
+            )
+        ]
+        prompt.extend(messages)
+        return self.llm.generate(prompt) 

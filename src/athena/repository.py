@@ -64,5 +64,25 @@ class MemoryRepository:
         #Delete a semantic memory
         self.database.delete_semantic_memory(key)
 
+# ============================================================
+# Episodic Memory
+# ============================================================
+    def save_episode(
+        self,
+        summary: str,
+        importance: float,
+        tags: str,
+    ) -> None:
+
+        self.database.save_episode(
+            summary=summary,
+            importance=importance,
+            tags=tags,
+        )
+
+    def get_recent_episodes(self, limit:int = 5):
+        return self.database.get_recent_episodes(limit)
+
     def close(self)-> None: 
         self.database.close()
+
