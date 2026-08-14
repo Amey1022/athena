@@ -11,3 +11,13 @@ class Message:
     role: str
     content: str
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
+
+@dataclass(slots=True)
+class NLPFeatures:
+    token_count:int
+    sentence_count:int
+    noun_ratio:float
+    verb_ratio:float
+    entity_count:int
+    tfidf_mean:float
+
