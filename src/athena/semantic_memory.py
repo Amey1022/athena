@@ -1,4 +1,6 @@
 from athena.repository import MemoryRepository
+from athena.logger import get_logger
+logger=get_logger("Semantic")
 
 class SemanticMemoryManager:
     """
@@ -8,9 +10,10 @@ class SemanticMemoryManager:
     preferences, entities, and other information that should
     persist beyond an individual conversation.
     """
-    def __init__(self) ->None:
-      print(">> Semantic Memory Manager __init__ called")
-      self.repository = MemoryRepository()
+    def __init__(self,
+                 repository: MemoryRepository,) ->None:
+      logger.info("SemanticMemoryManager initialized")
+      self.repository = repository
 
     def remember(
           self,

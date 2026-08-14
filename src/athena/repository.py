@@ -8,8 +8,9 @@ class MemoryRepository:
     This class translates high-level memory operations into
     database operations.
     """
-    def __init__(self):
-        self.database = DatabaseManager()
+    def __init__(self,
+                 database: DatabaseManager | None= None):
+        self.database = database or DatabaseManager()
 # ============================================================
 # Sessions
 # ============================================================

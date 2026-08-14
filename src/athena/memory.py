@@ -1,6 +1,8 @@
 from typing import List
 from athena.models import Message
 from athena.repository import MemoryRepository
+from athena.logger import get_logger
+logger= get_logger("Memory")
 
 class MemoryManager:
     """
@@ -13,10 +15,11 @@ class MemoryManager:
         - Knowledge Base
     """
 
-    def __init__ (self) -> None:
-        print(">> Memory Manager __init__ called")
+    def __init__ (self,
+                  repository: MemoryRepository,) -> None:
+        logger.info("Memory Manager initialized")
         self.working_memory: List[Message] = []
-        self.repository = MemoryRepository()
+        self.repository = repository
         self.current_session_id: int |None = None
 
     def initialize(self,system_prompt:str)-> None:
@@ -31,7 +34,7 @@ class MemoryManager:
         self.start_session()
 
     def add_message(self, role: str, content: str)-> None:
-        print(f"Saving message: {role}")
+        logger.info(f"Saving {role} message")
         message= Message(
             role = role,
             content = content,

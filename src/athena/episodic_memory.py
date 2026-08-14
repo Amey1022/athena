@@ -1,4 +1,6 @@
 from athena.repository import MemoryRepository
+from athena.logger import get_logger
+logger = get_logger("Episodic")
 
 class EpisodicMemoryManager:
     """
@@ -7,9 +9,10 @@ class EpisodicMemoryManager:
     Episodic memory stores important experiences,
     completed conversations, and significant events.
     """
-    def __init__(self)-> None:
-        print(">> Episodic Memory Manager __init__ called")
-        self.repository = MemoryRepository()
+    def __init__(self,
+                 repository: MemoryRepository,)-> None:
+        logger.info("EpisodicMemoryManager initialized")
+        self.repository = repository
 
     def remember(
             self,
@@ -28,22 +31,5 @@ class EpisodicMemoryManager:
 
     def close(self)-> None:
         self.repository.close()
-
-if __name__ == "__main__":
-
-    memory = EpisodicMemoryManager()
-
-    memory.remember(
-        summary="Implemented automatic semantic memory in ATHENA.",
-        importance=0.9,
-        tags="athena,semantic-memory",
-    )
-
-    episodes = memory.recall_recent()
-
-    for episode in episodes:
-        print(dict(episode))
-
-    memory.close()
 
 

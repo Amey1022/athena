@@ -5,14 +5,19 @@ from athena.semantic_memory import SemanticMemoryManager
 from athena.models import Message
 from athena.memory_detector import MemoryDetector
 from athena.episodic_memory import EpisodicMemoryManager
-
+from athena.database import DatabaseManager
+from athena.repository import MemoryRepository
+from athena.logger import get_logger
+logger = get_logger("Conversation")
 class ConversationManager:
     def __init__(self):
-        print(">> Conversation Manager __init__ called")
-        self.memory = MemoryManager()
-        self.semantic_memory = SemanticMemoryManager()
+        logger.info("ConversationManager initialized")
+        database= DatabaseManager()
+        repository = MemoryRepository(database)
+        self.memory = MemoryManager(repository)
+        self.semantic_memory = SemanticMemoryManager(repository)
         self.detector = MemoryDetector()
-        self.episodic_memory = EpisodicMemoryManager()
+        self.episodic_memory = EpisodicMemoryManager(repository)
         if not self.memory.get_working_memory() or self.memory.get_working_memory()[0].role != "system":
             self.memory.initialize(SYSTEM_PROMPT)
 
@@ -20,7 +25,7 @@ class ConversationManager:
         memories = self.detector.detect(user_message)
         for key, value in memories:
             self.semantic_memory.remember(key,value)
-            print(f">> Learned semantic memory: {key} = {value} ")
+            logger.info("Learned {key}")
         self.memory.add_message(
             "user",
             user_message
