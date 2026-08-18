@@ -8,6 +8,9 @@ from athena.episodic_memory import EpisodicMemoryManager
 from athena.database import DatabaseManager
 from athena.repository import MemoryRepository
 from athena.logger import get_logger
+from athena.nlp import NLPProcessor
+from athena.importance import ImportanceScorer
+
 logger = get_logger("Conversation")
 class ConversationManager:
     def __init__(self):
@@ -18,6 +21,8 @@ class ConversationManager:
         self.semantic_memory = SemanticMemoryManager(repository)
         self.detector = MemoryDetector()
         self.episodic_memory = EpisodicMemoryManager(repository)
+        self.nlp = NLPProcessor()
+        self.importance = ImportanceScorer()
         if not self.memory.get_working_memory() or self.memory.get_working_memory()[0].role != "system":
             self.memory.initialize(SYSTEM_PROMPT)
 
@@ -25,7 +30,7 @@ class ConversationManager:
         memories = self.detector.detect(user_message)
         for key, value in memories:
             self.semantic_memory.remember(key,value)
-            logger.info("Learned {key}")
+            logger.info(f"Learned semantic memory: {key}")
         self.memory.add_message(
             "user",
             user_message
@@ -56,11 +61,14 @@ class ConversationManager:
     def shutdown(self, brain: Brain)-> None:
         #Shut down conversation system
         messages = self.memory.get_working_memory()
-        summary = brain.summarize(messages)
+        summary = brain.summarize(messages) # Generate episodic memory
+        features = self.nlp.extract_features(summary) # Extract NLP features
+        importance = self.importance.score(features) # Calculate Importance
+        tags = list(set(features.entities + features.lemmas[:3])) # Generate tags
         self.episodic_memory.remember(
             summary=summary,
-            importance= 0.8,
-            tags= "conversation",
+            importance= importance,
+            tags= tags,
         )
         self.memory.shutdown(summary)
         self.semantic_memory.close()

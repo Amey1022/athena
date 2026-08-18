@@ -72,18 +72,19 @@ class MemoryRepository:
         self,
         summary: str,
         importance: float,
-        tags: str,
+        tags: list[str],
     ) -> None:
 
         self.database.save_episode(
             summary=summary,
             importance=importance,
-            tags=tags,
+            tags=",".join(tags),
         )
 
     def get_recent_episodes(self, limit:int = 5):
         return self.database.get_recent_episodes(limit)
 
+    
     def close(self)-> None: 
         self.database.close()
 

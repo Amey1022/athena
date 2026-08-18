@@ -17,13 +17,13 @@ class EpisodicMemoryManager:
     def remember(
             self,
             summary: str,
-            importance: float = 0.5,
-            tags: str = "",
+            importance: float ,
+            tags: list[str],
     )-> None:
         self.repository.save_episode(
             summary = summary,
             importance = importance,
-            tags = tags,
+            tags = tags
         )
 
     def recall_recent(self,limit: int = 5):

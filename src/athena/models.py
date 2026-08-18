@@ -16,8 +16,13 @@ class Message:
 class NLPFeatures:
     token_count:int
     sentence_count:int
+
     noun_ratio:float
     verb_ratio:float
+
     entity_count:int
+    entities: list[str]
+
     tfidf_mean:float
+    lemmas: list[str]
 

@@ -44,13 +44,18 @@ class NLPProcessor:
         noun_ratio = noun/ token_count if token_count else 0.0
         verb_ratio = verb/ token_count if token_count else 0.0
 
+        entities = [ent.text for ent in doc.ents]
+        lemmas = self.lemmatize(text)
+
         return NLPFeatures(
             token_count=token_count,
             sentence_count=sentence_count,
             noun_ratio=noun_ratio,
             verb_ratio=verb_ratio,
             entity_count=len(doc.ents),
+            entities = entities, 
             tfidf_mean=self.tfidf_score(text),
+            lemmas = lemmas,
         )
 
     def tfidf_score(self, text:str) -> float:

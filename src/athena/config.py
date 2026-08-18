@@ -1,7 +1,7 @@
 from pathlib import Path
 
 APP_NAME = "ATHENA"
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 
