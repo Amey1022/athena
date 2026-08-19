@@ -23,6 +23,12 @@ class NLPFeatures:
     entity_count:int
     entities: list[str]
 
-    tfidf_mean:float
     lemmas: list[str]
+
+@dataclass(slots=True)
+class SemanticFact:
+    category: str
+    key: str
+    value: str
+    confidence: float = 1.0
 

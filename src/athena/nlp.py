@@ -54,22 +54,6 @@ class NLPProcessor:
             verb_ratio=verb_ratio,
             entity_count=len(doc.ents),
             entities = entities, 
-            tfidf_mean=self.tfidf_score(text),
             lemmas = lemmas,
         )
-
-    def tfidf_score(self, text:str) -> float:
-        lemmas = self.lemmatize(text)
-
-        if not lemmas:
-            return 0.0
-
-        matrix = cast(
-            csr_matrix,
-            self.vectorizer.fit_transform([" ".join(lemmas)])
-        )
-        if matrix.nnz == 0:
-            return 0.0
-        
-        return float(matrix.data.mean())
     

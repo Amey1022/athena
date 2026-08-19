@@ -8,10 +8,8 @@ def test_high_importance():
     features = processor.extract_features(
         "We implemented the ATHENA memory architecture and completed database refactor"
     )
-    print(features)
-    score = scorer.score(features)
-    
-    assert score >0.7
+
+    assert scorer.score(features) >0.70
 
 def test_low_importance():
     features = processor.extract_features(
@@ -19,7 +17,7 @@ def test_low_importance():
     )
     score = scorer.score(features)
 
-    assert score < 0.3
+    assert score < 0.30
 
 def test_score_range():
     features = processor.extract_features("Python")
@@ -34,4 +32,4 @@ def test_personal_milestone():
 
     score = scorer.score(features)
 
-    assert score > 0.6
+    assert score > 0.60
